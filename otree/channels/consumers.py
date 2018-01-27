@@ -67,7 +67,7 @@ class OTreeJsonWebsocketConsumer(JsonWebsocketConsumer):
 
     def connect(self, message, **kwargs):
         # don't send accept: True until we upgrade to channels 1.0+
-        # self.message.reply_channel.send({"accept": True})
+        self.message.reply_channel.send({"accept": True})
         # only wrap this for connect. it's not as high-priority for
         # disconnect or receive.
         kwargs = self.clean_kwargs(**kwargs)
