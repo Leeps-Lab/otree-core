@@ -22,7 +22,7 @@ naiveip_re = re.compile(r"""^(?:
 
 DEFAULT_PORT = "8000"
 DEFAULT_ADDR = '0.0.0.0'
-NUM_WORKERS = 3
+DEFAULT_NUM_WORKERS = 3
 
 # made this simple class to reduce code duplication,
 # and to make testing easier (I didn't know how to check that it was called
@@ -70,6 +70,12 @@ class Command(BaseCommand):
         parser.add_argument(
             '--dev-https', action='store_true', dest='dev_https', default=False,
             help=ahelp)
+        ahelp = (
+            'Specify a number of channels worker processes to run. Defaults to {}.'.format(DEFAULT_NUM_WORKERS)
+        )
+        parser.add_argument(
+            '--num-workers', action='store', type=int, dest='num_workers', default=None,
+            help=ahelp)
 
 
     def handle(self, *args, **options):
@@ -116,7 +122,8 @@ class Command(BaseCommand):
 
         honcho = self.honcho
         honcho.add_otree_process('daphne', daphne_cmd)
-        for i in range(NUM_WORKERS):
+        num_workers = options['num_workers'] or DEFAULT_NUM_WORKERS
+        for i in range(num_workers):
             honcho.add_otree_process(
                 'worker{}'.format(i),
                 'otree runworker')
